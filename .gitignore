@@ -1,0 +1,6 @@
+T5BaseEpoch11/
+venv/
+wandb/
+nohup.out
+t5dataset.zip
+temp_model.pth
