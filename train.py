@@ -10,17 +10,22 @@ from torch.utils.data import Dataset, DataLoader
 import spacy
 from transformers import T5Tokenizer, T5ForConditionalGeneration, T5Config
 import wandb
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-print('Using device:', device)
+
 wandb.init(project='question-generation-v2')
 wbconfig = wandb.config
-PRETRAINED_MODEL = 'T5BaseEpoch11'
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print('Using device:', device)
+
+
+
+PRETRAINED_MODEL = 't5-base'
 DIR = ""
-BATCH_SIZE = 4
+BATCH_SIZE = 3
 SEQ_LENGTH = 512
 EPOCHS = 1
 LOG_INTERVAL = 5000
-LR = 0.01
+LR = 0.00005
 
 tokenizer = T5Tokenizer.from_pretrained(PRETRAINED_MODEL)
 tokenizer.add_special_tokens(
@@ -74,8 +79,8 @@ wbconfig.total_steps_train_per_epoch = len(train_loader)
 wbconfig.total_steps_test_per_epoch = len(valid_loader)
 config = T5Config(decoder_start_token_id=tokenizer.pad_token_id)
 model = T5ForConditionalGeneration(config).from_pretrained(PRETRAINED_MODEL)
-# save_dict = torch.load("qg_pretrained_t5_model_trained.pth")
-# model.load_state_dict(save_dict["model_state_dict"])
+save_dict = torch.load("qg_pretrained_t5_model_trained.pth")
+model.load_state_dict(save_dict["model_state_dict"])
 model = model.to(device)
 optimizer = torch.optim.SGD(model.parameters(), lr=LR,momentum=0.9,dampening=0, weight_decay=0, nesterov=True)
 wandb.watch(model)
@@ -177,5 +182,7 @@ for epoch in range(1, EPOCHS + 1):
              optimizer.state_dict(), 
              best_val_loss
         )
+        model.save_pretrained(directory="QGEpoch14")
+        tokenizer.save_pretrained(directory="QGEpoch14")
         print("| Model saved.")
         print_line()

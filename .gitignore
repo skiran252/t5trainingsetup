@@ -4,3 +4,4 @@ wandb/
 nohup.out
 t5dataset.zip
 temp_model.pth
+qg_pretrained_t5_model_trained.pth
