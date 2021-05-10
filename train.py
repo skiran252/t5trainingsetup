@@ -25,7 +25,7 @@ BATCH_SIZE = 3
 SEQ_LENGTH = 512
 EPOCHS = 1
 LOG_INTERVAL = 5000
-LR = 0.00005
+LR = 0.005
 
 tokenizer = T5Tokenizer.from_pretrained(PRETRAINED_MODEL)
 tokenizer.add_special_tokens(
@@ -182,7 +182,5 @@ for epoch in range(1, EPOCHS + 1):
              optimizer.state_dict(), 
              best_val_loss
         )
-        model.save_pretrained(directory="QGEpoch14")
-        tokenizer.save_pretrained(directory="QGEpoch14")
         print("| Model saved.")
         print_line()
